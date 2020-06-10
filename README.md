@@ -29,3 +29,9 @@ Chose any Javascript Framework/Library (React/Angular/Vanilla) JS to do this tas
 8. Display fullname on top or below the message. 
 9. Push on a public GitHub repository.
 
+## Build instructions
+
+1. `npm run server` to start the json mock server.
+2. `npm run start` to start the dev server.
+3. `npm run build` to get the app ready to prod.
+
