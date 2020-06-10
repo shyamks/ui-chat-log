@@ -21,8 +21,23 @@ const getSortedMessages = (messages) => {
   })
 }
 
+const getFormattedJson = (messages, membersMap) => {
+  return messages.map(msg => {
+    let userInfo = membersMap[msg.userId]
+    return {
+      messageId: msg.id,
+      userId: msg.userId,
+      fullName: `${userInfo.firstName} ${userInfo.lastName}`,
+      timestamp: msg.timestamp,
+      email: userInfo.email,
+      message: msg.message,
+      avatar: userInfo.avatar
+    }
+  })
+}
+
 function App() {
-  const [state, setState] = useState({messages:[], membersMap:{}, error: null})
+  const [state, setState] = useState({messages:[], error: null})
   const getChatLog = () => {
     setState({...state, loading: true})
     Promise.all(URLS.map(url =>
@@ -30,7 +45,10 @@ function App() {
       .then(response => response.json())                 
     ))
     .then(data => {
-        setState({ ...state, membersMap: convertArrayToMap(data[0]), messages: data[1], loading:false });
+      let membersMap = convertArrayToMap(data[0]);
+      let messages = data[1]
+      let formattedMessages = getFormattedJson(messages, membersMap)
+      setState({ ...state, messages: formattedMessages, loading:false, error: null });
     })
     .catch(error => {
       console.log(error,'error')
@@ -44,9 +62,7 @@ function App() {
       {state.error && <div>Error! Try again</div>}
       {!state.error && <ol style={{ display: "flex", flexDirection: "column" }}>
         {getSortedMessages(state.messages).map((msg) => {
-          let member = state.membersMap[msg.userId];
-          let { firstName, lastName, email, avatar } = member;
-          let { message, timestamp } = msg;
+          let { fullName, timestamp, email, message, avatar } = msg
           return (
             <li style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", flexDirection: "row" }}>
@@ -61,7 +77,7 @@ function App() {
                 />
                 <div className="hide"> {email} </div>
               </div>
-              <div>Name: {firstName} {lastName}</div>
+              <div>Name: {fullName}</div>
               <div>{message}</div>
               <div>Sent date: {getHumanReadableTime(timestamp)}</div>
             </li>
