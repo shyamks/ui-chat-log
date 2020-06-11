@@ -11,8 +11,22 @@ const convertArrayToMap = (members) => {
   return map
 }
 
+const getTimeFromDate = (timestamp) => {
+  let date = new Date(timestamp);
+  let hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+  let am_pm = date.getHours() >= 12 ? "PM" : "AM";
+  hours = hours < 10 ? "0" + hours : hours;
+  let minutes =
+    date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+  let seconds =
+    date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+  return hours + ":" + minutes + ":" + seconds + " " + am_pm;
+};
+
 const getHumanReadableTime = (timestamp) => {
-  return new Date(timestamp).toDateString()
+  let date = new Date(timestamp).toDateString()
+  let time = getTimeFromDate(timestamp)
+  return `${date} ${time}`
 }
 
 const getSortedMessages = (messages) => {
